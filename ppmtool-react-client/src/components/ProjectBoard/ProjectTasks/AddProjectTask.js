@@ -1,7 +1,23 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
+import classnames from "classnames";
+import { addProjectTask } from "../../../actions/backlogActions";
+import PropTypes from "prop-types";
 
 class AddProjectTask extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      summary: "",
+      acceptanceCriteria: "",
+      status: "",
+      priority: "3",
+      dueDate: "",
+    };
+  }
+
   render() {
     const { id } = this.props.match.params;
 
@@ -76,4 +92,8 @@ class AddProjectTask extends Component {
   }
 }
 
-export default AddProjectTask;
+AddProjectTask.propTypes = {
+  addProjectTask: PropTypes.func.isRequired,
+};
+
+export default connect(null, { addProjectTask })(AddProjectTask);

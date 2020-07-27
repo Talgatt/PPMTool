@@ -3,6 +3,7 @@ import {
   GET_PROJECT_TASK,
   DELETE_PROJECT_TASK,
 } from "../actions/types";
+import { act } from "react-dom/test-utils";
 
 const initialState = {
   project_tasks: [],
@@ -27,8 +28,9 @@ export default function (state = initialState, action) {
       return {
         ...state,
 
-        // TO_DO
-        //   project_tasks: state.project_tasks.filter(),
+        project_tasks: state.project_tasks.filter(
+          (project_task) => project_task.projectSequence !== action.payload
+        ),
       };
 
     default:

@@ -11,6 +11,8 @@ import com.personaltools.ppmtool.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
+
 @Service
 public class ProjectService {
     @Autowired
@@ -25,7 +27,19 @@ public class ProjectService {
     public Project saveOrUpdateProject(Project project, String username){
         //Logic
 
+        if(project.getId() != null){
+            Project existingProject = projectRepository.findByProjectIdentifier(project.getProjectIdentifier());
+
+            if(existingProject != null && (!existingProject.getProjectLeader().equals(username))){
+                throw new ProjectNotFoundException("Project not found in your account");
+            }else if(existingProject == null){
+                throw new ProjectNotFoundException("Project with ID: '"+project.getProjectIdentifier()+"' cannot be created because it does not exist.");
+            }
+        }
+
         try{
+
+
 
             User user = userRepository.findByUsername(username);
             project.setUser(user);
@@ -77,14 +91,9 @@ public class ProjectService {
         return projectRepository.findAllByProjectLeader(username);
     }
 
-    public void deleteProjectByIdentifier(String projectId){
-        Project project = projectRepository.findByProjectIdentifier(projectId.toUpperCase());
+    public void deleteProjectByIdentifier(String projectId, String username){
 
-        if(project == null){
-            throw new ProjectIdException("Cannot delete project with ID '"+projectId+"'. This project does not exist");
-        }
-
-        projectRepository.delete(project);
+        projectRepository.delete(findProjectByIdentifier(projectId, username));
     }
 
 
